@@ -8,17 +8,17 @@ const url = "wss://staging-backend.perfecttense.com";
 //Job Sorted by startTime ASC
 const progressStatuses = [
   {
-    active: true,
+    active: false,
     jobId: "xyz",
-    progress: 0.79,
-    message: "Churning some shit...",
+    progress: 1,
+    message: "Done",
     startTime: 1512284535683,
     type: "single"
   },
   {
-    active: false,
+    active: true,
     jobId: "abc",
-    progress: 0,
+    progress: 0.3,
     message: "Queued",
     startTime: 1512284586952,
     type: "single"
