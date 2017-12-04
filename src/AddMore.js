@@ -1,7 +1,5 @@
 import React from "react";
 import { connect } from "react-redux";
-import { uuid } from "uuid-random";
-
 const AddMore = ({ addSingle, addBulk }) => (
   <div>
     <button onClick={addSingle}>Add Single</button>
