@@ -1,7 +1,10 @@
 import React, { PureComponent } from "react";
+import { connect } from "react-redux";
+import { Line } from "rc-progress";
 import SingleProgressBar from "./SingleProgressBar";
 
 const url = "wss://staging-backend.perfecttense.com";
+
 //Job Sorted by startTime ASC
 const progressStatuses = [
   {
@@ -19,16 +22,40 @@ const progressStatuses = [
     message: "Queued",
     startTime: 1512284586952,
     type: "single"
+  },
+  {
+    active: null,
+    jobId: "bulk_324",
+    count: 2,
+    done: 0,
+    type: "bulk",
+    startTime: 1512285586952,
+    jobs: [
+      {
+        active: false,
+        jobId: "bulk_324_abc",
+        progress: 0,
+        message: "Queued"
+      },
+      {
+        active: false,
+        jobId: "bulk_324_qwe",
+        progress: 0,
+        message: "Queued"
+      }
+    ]
   }
 ];
 
 class ProgressBarList extends PureComponent {
   componentDidMount() {
     //start listening to broadcasts
+    this.props.setInitialState(progressStatuses);
   }
 
   render() {
-    const list = progressStatuses.map(status => {
+    const { state } = this.props;
+    const list = state.map(status => {
       if (status.type === "single") {
         return (
           <SingleProgressBar
@@ -40,6 +67,23 @@ class ProgressBarList extends PureComponent {
             startTime={status.startTime}
           />
         );
+      } else if (status.type === "bulk") {
+        return (
+          <div key={status.jobId}>
+            <Line percent={status.done * 100 / status.count} />
+            Job: {status.jobId},
+            {status.done}/{status.count} Done.
+            {status.jobs.map(job => (
+              <SingleProgressBar
+                key={job.jobId}
+                active={job.active}
+                jobId={job.jobId}
+                progress={job.progress}
+                message={job.message}
+              />
+            ))}
+          </div>
+        );
       }
       return null;
     });
@@ -47,4 +91,17 @@ class ProgressBarList extends PureComponent {
   }
 }
 
-export default ProgressBarList;
+const setInitData = payload => ({
+  type: "INIT_STATE",
+  payload
+});
+
+const mapStateToProps = state => ({
+  state
+});
+
+const mapDispatchToProps = dispatch => ({
+  setInitialState: payload => dispatch(setInitData(payload))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProgressBarList);

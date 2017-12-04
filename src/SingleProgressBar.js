@@ -8,8 +8,8 @@ class SingleProgressBar extends PureComponent {
       <div>
         <Line percent={progress * 100} />
         Job: {jobId},
-        {active && "Active, "}
-        {message}, {(Date.now() - startTime) / 1000} s,
+        {active && `Active,  Time Elapsed: ${(Date.now() - startTime) / 1000}`}
+        {`${message}`}
       </div>
     );
   }
