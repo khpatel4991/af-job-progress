@@ -1,5 +1,7 @@
 import React from "react";
+import axios from "axios";
 import { connect } from "react-redux";
+
 const AddMore = ({ addSingle, addBulk }) => (
   <div>
     <button onClick={addSingle}>Add Single</button>
@@ -18,6 +20,10 @@ const addSingle = () => ({
     type: "single"
   }
 });
+
+const addSingleRequest = () => dispatch => {
+  axios.post();
+};
 
 const addBulk = () => ({
   type: "PUSH_PROGRESS_STATUS",

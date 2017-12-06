@@ -54,8 +54,8 @@ class ProgressBarList extends PureComponent {
   }
 
   render() {
-    const { state } = this.props;
-    const list = state.map(status => {
+    const { jobs } = this.props;
+    const list = jobs.map(status => {
       if (status.type === "single") {
         return (
           <SingleProgressBar
@@ -97,7 +97,7 @@ const setInitData = payload => ({
 });
 
 const mapStateToProps = state => ({
-  state
+  jobs: state.jobs
 });
 
 const mapDispatchToProps = dispatch => ({
