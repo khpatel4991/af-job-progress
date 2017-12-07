@@ -9,20 +9,17 @@ const AddMore = ({ addSingle, addBulk }) => (
   </div>
 );
 
-const addSingle = () => ({
+const addSingle = (payload) => ({
   type: "PUSH_PROGRESS_STATUS",
-  payload: {
-    active: false,
-    jobId: Date.now(),
-    progress: 0,
-    message: "Queued",
-    startTime: Date.now(),
-    type: "single"
-  }
+  payload,
 });
 
 const addSingleRequest = () => dispatch => {
-  axios.post();
+  const request = axios.post('http://localhost:5090/single', {});
+  request.then(res => {
+    const { progress } = res.data;
+    dispatch(addSingle(progress));
+  }).catch(console.log);
 };
 
 const addBulk = () => ({
@@ -52,7 +49,7 @@ const addBulk = () => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  addSingle: () => dispatch(addSingle()),
+  addSingle: () => dispatch(addSingleRequest()),
   addBulk: () => dispatch(addBulk())
 });
 

@@ -3,10 +3,15 @@
   "description": "Progress Bar Layout for RabbitMQ implementation.",
   "version": "0.0.0",
   "dependencies": {
-    "redis": "2.8.0",
-    "react-dom": "16.0.0",
+    "actioncable": "^5.1.4",
+    "axios": "^0.17.1",
+    "rc-progress": "2.2.5",
     "react": "16.0.0",
-    "rc-progress": "2.2.5"
+    "react-dom": "16.0.0",
+    "react-redux": "^5.0.6",
+    "redis": "2.8.0",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
     "react-scripts": "1.0.0"

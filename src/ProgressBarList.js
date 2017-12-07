@@ -2,8 +2,9 @@ import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { Line } from "rc-progress";
 import SingleProgressBar from "./SingleProgressBar";
+import ActionCable from 'actioncable';
 
-const url = "wss://staging-backend.perfecttense.com";
+// const url = "wss://staging-backend.perfecttense.com";
 
 //Job Sorted by startTime ASC
 const progressStatuses = [
@@ -46,11 +47,33 @@ const progressStatuses = [
     ]
   }
 ];
+const mockJobList = progressStatuses.map(j => j.jobId);
+const mockJobs = progressStatuses.reduce((acc, j) => ({
+  ...acc,
+  [j.jobId]: j,
+}), {});
 
 class ProgressBarList extends PureComponent {
   componentDidMount() {
     //start listening to broadcasts
-    this.props.setInitialState(progressStatuses);
+    const { updateJobProgress } = this.props;
+    this.cable = ActionCable.createConsumer('ws://localhost:5090/cable');
+    this.progressSubscription = this.cable.subscriptions.create('ProgressChannel', {
+      connected: () => console.log('Connected: ProgressChannel'),
+      disconnected: () => console.log('Disconnected: ProgressChannel'),
+      received: (data) => {
+        console.log(data);
+        updateJobProgress(data);
+      }
+    });
+    this.props.setInitialState({
+      jobs: mockJobs,
+      jobList: mockJobList,
+    });
+  }
+
+  componentWillUnmount() {
+    this.cable.subscriptions.remove(this.progressSubscription);
   }
 
   render() {
@@ -96,12 +119,23 @@ const setInitData = payload => ({
   payload
 });
 
-const mapStateToProps = state => ({
-  jobs: state.jobs
-});
+const updateJobProgress = payload => ({
+  type: 'UPDATE_JOB',
+  payload,
+})
+
+const mapStateToProps = state => {
+  const { progressStatuses } = state;
+  const { jobs, jobList } = progressStatuses;
+  const mappedJobs = jobList.map(id => jobs[id]);
+  return {
+    jobs: mappedJobs
+  }
+};
 
 const mapDispatchToProps = dispatch => ({
-  setInitialState: payload => dispatch(setInitData(payload))
+  setInitialState: payload => dispatch(setInitData(payload)),
+  updateJobProgress: payload => dispatch(updateJobProgress(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProgressBarList);
