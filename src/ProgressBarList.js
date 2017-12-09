@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+import axios from 'axios';
 import { connect } from "react-redux";
 import { Line } from "rc-progress";
 import SingleProgressBar from "./SingleProgressBar";
@@ -56,7 +57,7 @@ const mockJobs = progressStatuses.reduce((acc, j) => ({
 class ProgressBarList extends PureComponent {
   componentDidMount() {
     //start listening to broadcasts
-    const { updateJobProgress } = this.props;
+    const { updateJobProgress, setInitialState } = this.props;
     this.cable = ActionCable.createConsumer('ws://localhost:5090/cable');
     this.progressSubscription = this.cable.subscriptions.create('ProgressChannel', {
       connected: () => console.log('Connected: ProgressChannel'),
@@ -66,10 +67,9 @@ class ProgressBarList extends PureComponent {
         updateJobProgress(data);
       }
     });
-    this.props.setInitialState({
-      jobs: mockJobs,
-      jobList: mockJobList,
-    });
+    const initialState = axios.get('http://localhost:5090/list')
+      .then(res => setInitialState(res.data))
+      .catch(console.error);
   }
 
   componentWillUnmount() {

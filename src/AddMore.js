@@ -19,7 +19,7 @@ const addSingleRequest = () => dispatch => {
   request.then(res => {
     const { progress } = res.data;
     dispatch(addSingle(progress));
-  }).catch(console.log);
+  }).catch(res => console.log(res.response.data.error));
 };
 
 const addBulk = () => ({
